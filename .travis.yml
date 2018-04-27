@@ -1,0 +1,34 @@
+language: android
+jdk:
+  - openjdk8
+sudo: required
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-27.0.3
+    - android-27
+
+before_install:
+  - cd $TRAVIS_BUILD_DIR
+  - gem update --system
+  - gem install fastlane --no-rdoc --no-ri --no-document --quiet
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+
+script:
+  - ./gradlew test
+  - aws s3 cp s3://onelogin-endpoint/secrets/peters_keystore.jks android_release.jks
+  - aws s3 cp s3://onelogin-endpoint/secrets/peters_credentials.json google-play-credentials.json
+  - if [ "$TRAVIS_BRANCH" = "develop" ]; then
+      fastlane internal;
+    fi
+  - if [ "$TRAVIS_BRANCH" = "alpha" ]; then
+      fastlane alpha;
+    fi
+  - if [ "$TRAVIS_BRANCH" = "beta" ]; then
+      fastlane beta;
+    fi
+  - if [ "$TRAVIS_BRANCH" = "production" ]; then
+      fastlane production;
+    fi
