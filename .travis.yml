@@ -22,6 +22,12 @@ script:
   - aws s3 cp s3://onelogin-endpoint/secrets/peters_credentials.json google-play-credentials.json
   - if [ "$TRAVIS_BRANCH" = "develop" ]; then
       ./gradlew incrementVersionCode;
+      git config --global user.email "travis@travis-ci.org";
+      git config --global user.name "Travis CI";
+      git remote add origin https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git;
+      git checkout develop;
+      git commit -am "Version code bumb [ci skip]";
+      git push;
     fi
   - if [ "$TRAVIS_BRANCH" = "alpha" ]; then
       fastlane alpha;
@@ -31,9 +37,4 @@ script:
     fi
   - if [ "$TRAVIS_BRANCH" = "production" ]; then
       fastlane production;
-    fi
-after_success:
-  - if [ "$TRAVIS_BRANCH" = "develop" ]; then
-      git commit -am "Version code bumb [ci skip]";
-      git push;
     fi
