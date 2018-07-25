@@ -1,3 +1,5 @@
+import java.util.regex.Pattern
+
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
@@ -28,6 +30,19 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+}
+
+task incrementVersionCode {
+    doLast {
+        def buildFile = file('build.gradle')
+        def matcher = Pattern.compile('versionCode (\\d+)').matcher(buildFile.getText())
+        matcher.find()
+
+        def currentVersionCode = Integer.parseInt(matcher.group(1))
+        def newVersionCode = currentVersionCode + 1
+        def buildFileContent = buildFile.getText().replaceAll("versionCode " + currentVersionCode, "versionCode " + newVersionCode)
+        buildFile.write(buildFileContent)
     }
 }
 
