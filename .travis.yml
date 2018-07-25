@@ -21,9 +21,9 @@ script:
   - aws s3 cp s3://onelogin-endpoint/secrets/peters_keystore.jks android_release.jks
   - aws s3 cp s3://onelogin-endpoint/secrets/peters_credentials.json google-play-credentials.json
   - if [ "$TRAVIS_BRANCH" = "develop" ]; then
-      ./gradlew incrementVersionCode
-      git commit -am "Version code bumb [ci skip]"
-      git push
+      ./gradlew incrementVersionCode;
+      git commit -am "Version code bumb [ci skip]";
+      git push;
     fi
   - if [ "$TRAVIS_BRANCH" = "alpha" ]; then
       fastlane alpha;
